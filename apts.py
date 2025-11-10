@@ -22,6 +22,25 @@ from loguru import logger
 # Initialize console for beautiful output
 console = Console()
 
+# Safe imports with fallbacks
+try:
+    from makv_ai_penetration_system import MakvAIModelManager, LiveProxyManager, MakvConversationalAI
+    AI_AVAILABLE = True
+except ImportError:
+    AI_AVAILABLE = False
+
+try:
+    from advanced_penetration_arsenal import AdvancedExploitationEngine, AdvancedProxyInfrastructure
+    ADVANCED_ARSENAL_AVAILABLE = True
+except ImportError:
+    ADVANCED_ARSENAL_AVAILABLE = False
+
+try:
+    from dual_ai_penetration_system import DualAIPenetrationSystem
+    DUAL_AI_AVAILABLE = True
+except ImportError:
+    DUAL_AI_AVAILABLE = False
+
 class APTS:
     """Advanced Penetration Testing System - Main Controller"""
     
@@ -271,7 +290,7 @@ class APTS:
         """Start natural conversation interface with Makv"""
         if not hasattr(self, 'conversational_ai') or not self.conversational_ai:
             try:
-                from makv_ai_penetration_system import MakvAIModelManager, MakvConversationalAI
+                # from makv_ai_penetration_system import MakvAIModelManager, MakvConversationalAI
                 if not hasattr(self, 'makv_ai'):
                     self.makv_ai = MakvAIModelManager()
                 await self.makv_ai.initialize_makv_ai_system()
