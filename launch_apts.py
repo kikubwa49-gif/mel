@@ -13,7 +13,8 @@ def ensure_dependencies():
     """Ensure core dependencies are installed"""
     core_packages = [
         "rich", "loguru", "aiohttp", "requests", 
-        "beautifulsoup4", "lxml", "cryptography", "dnspython"
+        "beautifulsoup4", "lxml", "cryptography", "dnspython",
+        "whois", "stem", "lz4", "zstandard", "blosc"
     ]
     
     missing = []

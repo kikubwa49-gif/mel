@@ -46,11 +46,12 @@ class MakvAIModelManager:
     """Lightweight AI model manager optimized for Makv's requirements"""
     
     def __init__(self):
-        # Lighter, more efficient models
+        # Ultra-lightweight models for low memory systems
         self.primary_model = "phi3:mini"  # 3.8B parameters, 2.3GB
-        self.verification_model = "mistral:7b"  # 7B parameters, 4.1GB
+        self.verification_model = "phi3:mini"  # Use same model to save memory
         self.conversation_model = "phi3:mini"  # Same model for consistency
         self.models_ready = False
+        self.memory_optimized = True
         
     async def initialize_makv_ai_system(self):
         """Initialize Makv's personalized AI system"""
@@ -85,10 +86,9 @@ class MakvAIModelManager:
         print("✅ Ollama installed and ready for Makv")
     
     async def download_lightweight_models(self):
-        """Download lightweight but powerful AI models"""
+        """Download ultra-lightweight AI models for low memory systems"""
         models = [
-            ("phi3:mini", "Phi-3 Mini (3.8B) - Primary AI for Makv", "2.3GB"),
-            ("mistral:7b", "Mistral 7B - Verification AI", "4.1GB")
+            ("phi3:mini", "Phi-3 Mini (3.8B) - Unified AI for Makv", "2.3GB")
         ]
         
         for model, description, size in models:
