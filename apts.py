@@ -267,17 +267,55 @@ class APTS:
             logger.error(f"Penetration test failed: {e}")
             console.print(f"[bold red]❌ Penetration test failed: {e}[/bold red]")
             
+    async def start_conversation_with_makv(self):
+        """Start natural conversation interface with Makv"""
+        if not hasattr(self, 'conversational_ai') or not self.conversational_ai:
+            try:
+                from makv_ai_penetration_system import MakvAIModelManager, MakvConversationalAI
+                if not hasattr(self, 'makv_ai'):
+                    self.makv_ai = MakvAIModelManager()
+                await self.makv_ai.initialize_makv_ai_system()
+                self.conversational_ai = MakvConversationalAI(self.makv_ai)
+            except Exception as e:
+                console.print(f"[red]❌ AI system initialization failed: {e}[/red]")
+                console.print("[yellow]Falling back to standard menu...[/yellow]")
+                return
+        
+        console.print("\n[bold green]🤖 MAKV'S AI ASSISTANT READY[/bold green]")
+        console.print("[cyan]Talk to me naturally - no menu numbers needed![/cyan]")
+        console.print("[yellow]Examples: 'Test youngplatform.com', 'Show proxy status', 'What vulnerabilities did you find?'[/yellow]")
+        
+        while True:
+            try:
+                user_input = console.input("\n[bold blue]Makv[/bold blue]: ").strip()
+                
+                if user_input.lower() in ['exit', 'quit', 'bye', 'back']:
+                    console.print("[green]Returning to main menu...[/green]")
+                    break
+                
+                if user_input:
+                    console.print("[yellow]🤖 APTS-AI: [/yellow]", end="")
+                    response = await self.conversational_ai.chat_with_makv(user_input)
+                    console.print(response)
+                
+            except KeyboardInterrupt:
+                console.print("\n[green]Returning to main menu...[/green]")
+                break
+            except Exception as e:
+                console.print(f"[red]Error: {e}[/red]")
+
     def display_menu(self):
         """Display main menu"""
         menu = """
         [bold white]APTS - Main Menu[/bold white]
         
-        [1] Activate Ghost Mode (Level 1)
-        [2] Configure Targets (Level 2)
-        [3] Run Penetration Test
-        [4] View System Status
-        [5] Generate Test Report
-        [6] Exit System
+        [1] 🤖 Talk to Makv's AI Assistant (Natural Conversation)
+        [2] Activate Ghost Mode (Level 1)
+        [3] Configure Targets (Level 2)
+        [4] Run Penetration Test
+        [5] View System Status
+        [6] Generate Test Report
+        [7] Exit System
         
         [bold yellow]Current Status:[/bold yellow]
         • Ghost Mode: {'🟢 ACTIVE' if self.ghost_mode_active else '🔴 INACTIVE'}
@@ -293,22 +331,24 @@ class APTS:
             self.display_menu()
             
             try:
-                choice = console.input("\n[bold cyan]Select option (1-6): [/bold cyan]")
+                choice = console.input("\n[bold cyan]Select option (1-7): [/bold cyan]")
                 
                 if choice == "1":
-                    await self.activate_ghost_mode()
+                    await self.start_conversation_with_makv()
                 elif choice == "2":
-                    await self.configure_targets()
+                    await self.activate_ghost_mode()
                 elif choice == "3":
+                    await self.configure_targets()
+                elif choice == "4":
                     if self.targets:
                         await self.run_penetration_test(self.targets)
                     else:
                         console.print("[bold red]❌ No targets configured![/bold red]")
-                elif choice == "4":
-                    await self.display_system_status()
                 elif choice == "5":
-                    await self.generate_test_report()
+                    await self.display_system_status()
                 elif choice == "6":
+                    await self.generate_test_report()
+                elif choice == "7":
                     console.print("[bold yellow]👋 Shutting down APTS...[/bold yellow]")
                     await self.shutdown()
                     break
