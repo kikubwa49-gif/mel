@@ -24,21 +24,12 @@ def ensure_dependencies():
             missing.append(package)
     
     if missing:
-        print(f"📦 Installing missing packages: {', '.join(missing)}")
-        try:
-            # Try with --user flag first
-            subprocess.run([sys.executable, "-m", "pip", "install", "--user"] + missing, 
-                         check=True, capture_output=True)
-            print("✅ Dependencies installed")
-        except subprocess.CalledProcessError:
-            try:
-                # Try without --user flag
-                subprocess.run([sys.executable, "-m", "pip", "install"] + missing, 
-                             check=True, capture_output=True)
-                print("✅ Dependencies installed")
-            except subprocess.CalledProcessError as e:
-                print(f"❌ Failed to install dependencies. Trying to run anyway...")
-                print("⚠️ Some features may not work properly")
+        print(f"📦 Missing packages detected: {', '.join(missing)}")
+        print("⚠️ Please install manually with:")
+        print(f"   pip install --user {' '.join(missing)}")
+        print("🚀 Continuing with available packages...")
+    else:
+        print("✅ All core dependencies available")
     
     return True
 
