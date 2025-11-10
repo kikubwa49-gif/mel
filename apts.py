@@ -323,12 +323,30 @@ class APTS:
             except Exception as e:
                 console.print(f"[red]Error: {e}[/red]")
 
+    async def direct_penetration_testing(self):
+        """Direct penetration testing without AI dependencies"""
+        console.print("\n[bold green]🎯 DIRECT PENETRATION TESTING MODE[/bold green]")
+        console.print("[cyan]Fast, reliable penetration testing without AI dependencies[/cyan]")
+        console.print("[yellow]Perfect for immediate results and comprehensive security assessment[/yellow]")
+        
+        target = console.input("\n🎯 Enter target domain (e.g., youngplatform.com): ").strip()
+        if target:
+            try:
+                from direct_penetration_engine import run_penetration_test
+                console.print(f"\n[bold blue]🚀 Starting comprehensive penetration test on {target}[/bold blue]")
+                await run_penetration_test(target)
+            except Exception as e:
+                console.print(f"[red]Penetration test error: {e}[/red]")
+                logger.error(f"Direct penetration test failed: {e}")
+        else:
+            console.print("[red]❌ No target specified[/red]")
+
     def display_menu(self):
         """Display main menu"""
         menu = """
         [bold white]APTS - Main Menu[/bold white]
         
-        [1] 🤖 Talk to Makv's AI Assistant (Natural Conversation)
+        [1] 🎯 Direct Penetration Testing (Fast & Reliable)
         [2] Activate Ghost Mode (Level 1)
         [3] Configure Targets (Level 2)
         [4] Run Penetration Test
@@ -353,7 +371,7 @@ class APTS:
                 choice = console.input("\n[bold cyan]Select option (1-7): [/bold cyan]")
                 
                 if choice == "1":
-                    await self.start_conversation_with_makv()
+                    await self.direct_penetration_testing()
                 elif choice == "2":
                     await self.activate_ghost_mode()
                 elif choice == "3":
