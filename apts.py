@@ -41,10 +41,10 @@ except ImportError as e:
 
 # Safe imports with fallbacks - NO HEAVY AI SYSTEMS
 try:
-    from direct_penetration_engine import DirectPenetrationEngine
-    DIRECT_ENGINE_AVAILABLE = True
+    from bulletproof_penetration_engine import MakvBulletproofPenetrationEngine
+    BULLETPROOF_ENGINE_AVAILABLE = True
 except ImportError:
-    DIRECT_ENGINE_AVAILABLE = False
+    BULLETPROOF_ENGINE_AVAILABLE = False
 
 class APTS:
     """Advanced Penetration Testing System - Main Controller"""
@@ -294,7 +294,7 @@ class APTS:
             # Target acquisition and reconnaissance
             console.print("🔍 Phase 1: Target acquisition and reconnaissance...")
             # Pass Ghost Mode instance to target system
-            if self.target_system and hasattr(self.target_system, 'ghost_mode'):
+            if self.target_system and hasattr(self.target_system, 'ghost_mode') and self.ghost_mode:
                 self.target_system.ghost_mode = self.ghost_mode
             
             if self.target_system:
@@ -309,7 +309,7 @@ class APTS:
             
             if self.vuln_engine:
                 # Pass Ghost Mode instance to vulnerability engine
-                if hasattr(self.vuln_engine, 'ghost_mode'):
+                if hasattr(self.vuln_engine, 'ghost_mode') and self.ghost_mode:
                     self.vuln_engine.ghost_mode = self.ghost_mode
                 vulnerabilities = await self.vuln_engine.assess_all_targets(expanded_targets)
                 
@@ -340,14 +340,14 @@ class APTS:
     async def run_direct_penetration_test(self, targets):
         """Run direct penetration test without complex components"""
         try:
-            from direct_penetration_engine import DirectPenetrationEngine
-            engine = DirectPenetrationEngine()
+            from bulletproof_penetration_engine import MakvBulletproofPenetrationEngine
+            engine = MakvBulletproofPenetrationEngine()
             
             for target in targets:
                 console.print(f"\n[bold cyan]🎯 Testing {target}...[/bold cyan]")
                 await engine.full_penetration_test(target)
                 
-            console.print("[bold green]✅ Direct penetration test completed![/bold green]")
+            console.print("[bold green]✅ Bulletproof penetration test completed![/bold green]")
             
         except Exception as e:
             logger.error(f"Direct penetration test failed: {e}")
@@ -427,7 +427,11 @@ class APTS:
 
     def display_menu(self):
         """Display main menu"""
-        menu = """
+        ghost_status = '🟢 ACTIVE' if self.ghost_mode_active else '🔴 INACTIVE'
+        targets_count = len(self.targets)
+        system_status = '🟢 READY' if self.initialized else '🔴 NOT READY'
+        
+        menu = f"""
         [bold white]APTS - Main Menu[/bold white]
         
         [1] 🎯 BULLETPROOF Penetration Testing (NO DEPENDENCIES)
@@ -439,9 +443,9 @@ class APTS:
         [7] Exit System
         
         [bold yellow]Current Status:[/bold yellow]
-        • Ghost Mode: {'🟢 ACTIVE' if self.ghost_mode_active else '🔴 INACTIVE'}
-        • Targets Loaded: {len(self.targets)}
-        • System: {'🟢 READY' if self.initialized else '🔴 NOT READY'}
+        • Ghost Mode: {ghost_status}
+        • Targets Loaded: {targets_count}
+        • System: {system_status}
         """
         
         console.print(Panel(menu, title="[bold blue]APTS Control Panel[/bold blue]"))
@@ -520,7 +524,7 @@ class APTS:
     async def shutdown(self):
         """Gracefully shutdown APTS"""
         try:
-            if hasattr(self, 'ghost_mode') and self.ghost_mode_active:
+            if hasattr(self, 'ghost_mode') and self.ghost_mode and self.ghost_mode_active:
                 await self.ghost_mode.deactivate()
                 
             console.print("[bold green]✅ APTS shutdown complete[/bold green]")
