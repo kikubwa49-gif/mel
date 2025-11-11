@@ -7,7 +7,7 @@ WARNING: This system is designed for AUTHORIZED penetration testing ONLY.
 Unauthorized use is illegal and unethical.
 
 Author: Ethical Security Research Team
-Version: 1.0.0 - Ghost Protocol
+Version: 2.0.0 - Chinese Optimization Protocol
 """
 
 import asyncio
@@ -18,35 +18,40 @@ from rich.console import Console
 from rich.panel import Panel
 from rich.text import Text
 from loguru import logger
+import psutil
 
 # Initialize console for beautiful output
 console = Console()
 
-# Safe imports with fallbacks
+# Initialize Chinese Memory Optimizer FIRST
 try:
-    from makv_ai_penetration_system import MakvAIModelManager, LiveProxyManager, MakvConversationalAI
-    AI_AVAILABLE = True
-except ImportError:
-    AI_AVAILABLE = False
+    from core.chinese_memory_optimizer import get_memory_optimizer, optimize_for_low_ram
+    memory_optimizer = get_memory_optimizer()
+    
+    # Optimize for low RAM if system has 4GB or less
+    total_ram_gb = psutil.virtual_memory().total / (1024**3)
+    if total_ram_gb <= 4:
+        optimize_for_low_ram()
+        logger.info(f"🎯 Low RAM optimization activated for {total_ram_gb:.1f}GB system")
+    
+    MEMORY_OPTIMIZER_AVAILABLE = True
+except ImportError as e:
+    logger.warning(f"Memory optimizer not available: {e}")
+    MEMORY_OPTIMIZER_AVAILABLE = False
 
+# Safe imports with fallbacks - NO HEAVY AI SYSTEMS
 try:
-    from advanced_penetration_arsenal import AdvancedExploitationEngine, AdvancedProxyInfrastructure
-    ADVANCED_ARSENAL_AVAILABLE = True
+    from direct_penetration_engine import DirectPenetrationEngine
+    DIRECT_ENGINE_AVAILABLE = True
 except ImportError:
-    ADVANCED_ARSENAL_AVAILABLE = False
-
-try:
-    from dual_ai_penetration_system import DualAIPenetrationSystem
-    DUAL_AI_AVAILABLE = True
-except ImportError:
-    DUAL_AI_AVAILABLE = False
+    DIRECT_ENGINE_AVAILABLE = False
 
 class APTS:
     """Advanced Penetration Testing System - Main Controller"""
     
     def __init__(self):
-        self.version = "1.0.0"
-        self.codename = "GHOST_PROTOCOL"
+        self.version = "2.0.0"
+        self.codename = "CHINESE_OPTIMIZATION_PROTOCOL"
         self.initialized = False
         self.safe_mode = False
         self.ghost_mode_active = False
@@ -93,7 +98,7 @@ class APTS:
     ║         Advanced Penetration Testing System                   ║
     ║              Military-Grade Security Assessment               ║
     ║                                                               ║
-    ║    Version: 1.0.0 - GHOST PROTOCOL                          ║
+    ║    Version: 2.0.0 - CHINESE OPTIMIZATION PROTOCOL          ║
     ║    Classification: AUTHORIZED USE ONLY                        ║
     ║                                                               ║
     ╚═══════════════════════════════════════════════════════════════╝
@@ -131,6 +136,10 @@ class APTS:
         console.print("\n[bold blue]🚀 Initializing APTS Ghost Protocol...[/bold blue]")
         
         try:
+            # Initialize global memory optimization first
+            console.print("🧠 Activating global memory optimization...")
+            await self.initialize_global_memory_optimization()
+            
             # Initialize hardware optimization
             console.print("⚡ Activating hardware optimization...")
             await self.initialize_hardware_optimization()
@@ -160,6 +169,17 @@ class APTS:
             console.print("[yellow]⚠️ Starting in SAFE MODE with limited functionality...[/yellow]")
             self.safe_mode = True
             self.initialized = True
+            
+    async def initialize_global_memory_optimization(self):
+        """Initialize global memory optimization system"""
+        try:
+            from core.global_memory_optimizer import optimize_system_memory, get_memory_stats
+            self.memory_optimizer = optimize_system_memory()
+            stats = get_memory_stats()
+            logger.info(f"🧠 Memory optimization active - {stats['memory_saved_mb']:.1f}MB saved")
+        except Exception as e:
+            logger.warning(f"Global memory optimization failed: {e}")
+            self.memory_optimizer = None
             
     async def initialize_hardware_optimization(self):
         """Initialize hardware optimization system"""
@@ -260,16 +280,29 @@ class APTS:
         console.print(f"\n[bold cyan]🎯 Starting penetration test on {len(targets)} target(s)...[/bold cyan]")
         
         try:
+            # Check if components are available
+            if not self.target_system:
+                console.print("[bold red]❌ Target system not available - using direct penetration engine[/bold red]")
+                await self.run_direct_penetration_test(targets)
+                return
+                
+            if not self.vuln_engine:
+                console.print("[bold red]❌ Vulnerability engine not available - using direct penetration engine[/bold red]")
+                await self.run_direct_penetration_test(targets)
+                return
+            
             # Target acquisition and reconnaissance
             console.print("🔍 Phase 1: Target acquisition and reconnaissance...")
             # Pass Ghost Mode instance to target system
-            self.target_system.ghost_mode = self.ghost_mode
+            if hasattr(self.target_system, 'ghost_mode'):
+                self.target_system.ghost_mode = self.ghost_mode
             expanded_targets = await self.target_system.acquire_targets(targets)
             
             # Vulnerability assessment
             console.print("⚔️  Phase 2: Aggressive vulnerability assessment...")
             # Pass Ghost Mode instance to vulnerability engine
-            self.vuln_engine.ghost_mode = self.ghost_mode
+            if hasattr(self.vuln_engine, 'ghost_mode'):
+                self.vuln_engine.ghost_mode = self.ghost_mode
             vulnerabilities = await self.vuln_engine.assess_all_targets(expanded_targets)
             
             # Exploitation phase
@@ -278,13 +311,33 @@ class APTS:
             
             # Report generation
             console.print("📊 Phase 4: Generating encrypted report...")
-            report_path = await self.reporting.generate_report(exploits)
-            
-            console.print(f"[bold green]✅ Penetration test completed! Report: {report_path}[/bold green]")
+            if self.reporting:
+                report_path = await self.reporting.generate_report(exploits)
+                console.print(f"[bold green]✅ Penetration test completed! Report: {report_path}[/bold green]")
+            else:
+                console.print("[bold green]✅ Penetration test completed![/bold green]")
             
         except Exception as e:
             logger.error(f"Penetration test failed: {e}")
             console.print(f"[bold red]❌ Penetration test failed: {e}[/bold red]")
+            console.print("[yellow]🔄 Falling back to direct penetration engine...[/yellow]")
+            await self.run_direct_penetration_test(targets)
+            
+    async def run_direct_penetration_test(self, targets):
+        """Run direct penetration test without complex components"""
+        try:
+            from direct_penetration_engine import DirectPenetrationEngine
+            engine = DirectPenetrationEngine()
+            
+            for target in targets:
+                console.print(f"\n[bold cyan]🎯 Testing {target}...[/bold cyan]")
+                await engine.full_penetration_test(target)
+                
+            console.print("[bold green]✅ Direct penetration test completed![/bold green]")
+            
+        except Exception as e:
+            logger.error(f"Direct penetration test failed: {e}")
+            console.print(f"[bold red]❌ Direct penetration test failed: {e}[/bold red]")
             
     async def start_conversation_with_makv(self):
         """Start natural conversation interface with Makv"""
