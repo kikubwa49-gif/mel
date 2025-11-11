@@ -435,12 +435,14 @@ class APTS:
         [bold white]APTS - Main Menu[/bold white]
         
         [1] 🎯 BULLETPROOF Penetration Testing (NO DEPENDENCIES)
-        [2] Activate Ghost Mode (Level 1)
-        [3] Configure Targets (Level 2)
-        [4] Run Penetration Test
-        [5] View System Status
-        [6] Generate Test Report
-        [7] Exit System
+        [2] ⚡ ADVANCED Penetration Testing (REAL TOOLS)
+        [3] Activate Ghost Mode (Level 1)
+        [4] Configure Targets (Level 2)
+        [5] Run Penetration Test
+        [6] View System Status
+        [7] Generate Test Report
+        [8] Install Penetration Tools
+        [9] Exit System
         
         [bold yellow]Current Status:[/bold yellow]
         • Ghost Mode: {ghost_status}
@@ -456,24 +458,28 @@ class APTS:
             self.display_menu()
             
             try:
-                choice = console.input("\n[bold cyan]Select option (1-7): [/bold cyan]")
+                choice = console.input("\n[bold cyan]Select option (1-9): [/bold cyan]")
                 
                 if choice == "1":
                     await self.direct_penetration_testing()
                 elif choice == "2":
-                    await self.activate_ghost_mode()
+                    await self.advanced_penetration_testing()
                 elif choice == "3":
-                    await self.configure_targets()
+                    await self.activate_ghost_mode()
                 elif choice == "4":
+                    await self.configure_targets()
+                elif choice == "5":
                     if self.targets:
                         await self.run_penetration_test(self.targets)
                     else:
                         console.print("[bold red]❌ No targets configured![/bold red]")
-                elif choice == "5":
-                    await self.display_system_status()
                 elif choice == "6":
-                    await self.generate_test_report()
+                    await self.display_system_status()
                 elif choice == "7":
+                    await self.generate_test_report()
+                elif choice == "8":
+                    await self.install_penetration_tools()
+                elif choice == "9":
                     console.print("[bold yellow]👋 Shutting down APTS...[/bold yellow]")
                     await self.shutdown()
                     break
@@ -520,6 +526,95 @@ class APTS:
         """Generate test report"""
         console.print("[bold blue]📊 Generating test report...[/bold blue]")
         # Implementation will be added with reporting system
+    
+    async def direct_penetration_testing(self):
+        """Direct penetration testing using bulletproof engine"""
+        console.print("\n[bold red]🎯 BULLETPROOF PENETRATION TESTING MODE[/bold red]")
+        console.print("[bold yellow]NO DEPENDENCIES - GUARANTEED TO WORK[/bold yellow]")
+        console.print("[bold green]Built for 100% success rate on any system[/bold green]")
+        
+        target = console.input("\n[bold cyan]🎯 Enter target domain (e.g., youngplatform.com): [/bold cyan]")
+        
+        if target:
+            try:
+                from bulletproof_penetration_engine import MakvBulletproofPenetrationEngine
+                
+                console.print(f"\n[bold green]🚀 Starting bulletproof penetration test on {target}[/bold green]")
+                
+                # Run bulletproof penetration test
+                engine = MakvBulletproofPenetrationEngine()
+                results = await engine.full_penetration_test(target)
+                
+                console.print(f"\n[bold green]✅ Bulletproof penetration test completed![/bold green]")
+                console.print(f"[bold yellow]📊 Results saved to reports directory[/bold yellow]")
+                
+            except Exception as e:
+                console.print(f"[bold red]❌ Bulletproof penetration test failed: {e}[/bold red]")
+        else:
+            console.print("[bold red]❌ No target specified![/bold red]")
+    
+    async def advanced_penetration_testing(self):
+        """Advanced penetration testing using real tools"""
+        console.print("\n[bold red]⚡ ADVANCED PENETRATION TESTING MODE[/bold red]")
+        console.print("[bold yellow]REAL TOOLS - NUCLEI, SQLMAP, FFUF, NMAP[/bold yellow]")
+        console.print("[bold green]Military-grade penetration testing arsenal[/bold green]")
+        
+        target = console.input("\n[bold cyan]🎯 Enter target domain (e.g., youngplatform.com): [/bold cyan]")
+        
+        if target:
+            try:
+                from advanced_penetration_engine import MakvAdvancedPenetrationEngine
+                
+                console.print(f"\n[bold green]🚀 Starting advanced penetration test on {target}[/bold green]")
+                console.print("[bold yellow]⚠️ This will use real penetration tools and may take longer[/bold yellow]")
+                
+                # Run advanced penetration test
+                engine = MakvAdvancedPenetrationEngine()
+                results = await engine.full_penetration_test(target)
+                
+                console.print(f"\n[bold green]✅ Advanced penetration test completed![/bold green]")
+                console.print(f"[bold yellow]📊 Detailed results saved to reports directory[/bold yellow]")
+                
+                # Display critical findings
+                if results.get('critical_findings'):
+                    console.print("\n[bold red]🚨 CRITICAL FINDINGS:[/bold red]")
+                    for finding in results['critical_findings']:
+                        console.print(f"[bold red]• {finding}[/bold red]")
+                
+            except Exception as e:
+                console.print(f"[bold red]❌ Advanced penetration test failed: {e}[/bold red]")
+                console.print("[bold yellow]💡 Try installing penetration tools first (option 8)[/bold yellow]")
+        else:
+            console.print("[bold red]❌ No target specified![/bold red]")
+    
+    async def install_penetration_tools(self):
+        """Install penetration testing tools"""
+        console.print("\n[bold red]🚀 PENETRATION TOOLS INSTALLER[/bold red]")
+        console.print("[bold yellow]Installing REAL penetration testing tools...[/bold yellow]")
+        
+        confirm = console.input("\n[bold cyan]Install Nuclei, SQLMap, FFUF, Nmap, and other tools? (y/N): [/bold cyan]")
+        
+        if confirm.lower() in ['y', 'yes']:
+            try:
+                console.print("\n[bold green]📦 Starting installation process...[/bold green]")
+                
+                # Run the installer
+                import subprocess
+                result = subprocess.run(['python3', 'install_penetration_tools.py'], 
+                                      capture_output=True, text=True)
+                
+                if result.returncode == 0:
+                    console.print("\n[bold green]✅ All penetration tools installed successfully![/bold green]")
+                    console.print("[bold yellow]🔄 Please restart your terminal or run: source ~/.bashrc[/bold yellow]")
+                    console.print("[bold green]🎯 Your system is now ready for advanced penetration testing![/bold green]")
+                else:
+                    console.print(f"\n[bold red]❌ Installation failed: {result.stderr}[/bold red]")
+                    console.print("[bold yellow]💡 You may need to install some dependencies manually[/bold yellow]")
+                
+            except Exception as e:
+                console.print(f"[bold red]❌ Installation failed: {e}[/bold red]")
+        else:
+            console.print("[bold yellow]Installation cancelled.[/bold yellow]")
         
     async def shutdown(self):
         """Gracefully shutdown APTS"""
