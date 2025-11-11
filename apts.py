@@ -340,22 +340,10 @@ class APTS:
             console.print(f"[bold red]❌ Direct penetration test failed: {e}[/bold red]")
             
     async def start_conversation_with_makv(self):
-        """Start natural conversation interface with Makv"""
-        if not hasattr(self, 'conversational_ai') or not self.conversational_ai:
-            try:
-                # from makv_ai_penetration_system import MakvAIModelManager, MakvConversationalAI
-                if not hasattr(self, 'makv_ai'):
-                    self.makv_ai = MakvAIModelManager()
-                await self.makv_ai.initialize_makv_ai_system()
-                self.conversational_ai = MakvConversationalAI(self.makv_ai)
-            except Exception as e:
-                console.print(f"[red]❌ AI system initialization failed: {e}[/red]")
-                console.print("[yellow]Falling back to standard menu...[/yellow]")
-                return
-        
-        console.print("\n[bold green]🤖 MAKV'S AI ASSISTANT READY[/bold green]")
-        console.print("[cyan]Talk to me naturally - no menu numbers needed![/cyan]")
-        console.print("[yellow]Examples: 'Test youngplatform.com', 'Show proxy status', 'What vulnerabilities did you find?'[/yellow]")
+        """Direct penetration testing interface - NO AI DEPENDENCIES"""
+        console.print("\n[bold green]🎯 MAKV'S DIRECT PENETRATION SYSTEM[/bold green]")
+        console.print("[cyan]Pure penetration testing power - No AI needed![/cyan]")
+        console.print("[yellow]Commands: 'test <domain>', 'scan <domain>', 'hack <domain>', 'exit'[/yellow]")
         
         while True:
             try:
@@ -366,15 +354,108 @@ class APTS:
                     break
                 
                 if user_input:
-                    console.print("[yellow]🤖 APTS-AI: [/yellow]", end="")
-                    response = await self.conversational_ai.chat_with_makv(user_input)
-                    console.print(response)
+                    # Parse command for target
+                    if any(keyword in user_input.lower() for keyword in ['test', 'scan', 'hack', 'target', 'penetrate']):
+                        # Extract domain from input
+                        words = user_input.split()
+                        target = None
+                        for word in words:
+                            if '.' in word and not word.startswith('.'):
+                                target = word.replace(',', '').replace(';', '').replace(':', '').strip()
+                                break
+                        
+                        if target:
+                            console.print(f"\n[bold green]🚀 LAUNCHING PENETRATION TEST ON {target}[/bold green]")
+                            await self.execute_direct_penetration(target)
+                        else:
+                            console.print("[yellow]Please specify a target: 'test youngplatform.com'[/yellow]")
+                    else:
+                        console.print("[yellow]Available commands:[/yellow]")
+                        console.print("  • test <domain> - Run full penetration test")
+                        console.print("  • scan <domain> - Quick vulnerability scan")
+                        console.print("  • hack <domain> - Aggressive penetration test")
+                        console.print("  • exit - Return to main menu")
                 
             except KeyboardInterrupt:
                 console.print("\n[green]Returning to main menu...[/green]")
                 break
             except Exception as e:
                 console.print(f"[red]Error: {e}[/red]")
+                
+    async def execute_direct_penetration(self, target):
+        """Execute direct penetration test"""
+        try:
+            console.print(f"[bold cyan]🎯 Target: {target}[/bold cyan]")
+            console.print("[yellow]🔍 Phase 1: Reconnaissance...[/yellow]")
+            
+            # Basic reconnaissance
+            import socket
+            try:
+                ip = socket.gethostbyname(target)
+                console.print(f"[green]✅ IP Address: {ip}[/green]")
+            except:
+                console.print(f"[red]❌ Could not resolve {target}[/red]")
+                return
+            
+            console.print("[yellow]🛡️ Phase 2: Vulnerability Scanning...[/yellow]")
+            
+            # Test common vulnerabilities
+            vulnerabilities_found = []
+            
+            # Test HTTP/HTTPS
+            import aiohttp
+            async with aiohttp.ClientSession() as session:
+                for protocol in ['http', 'https']:
+                    try:
+                        url = f"{protocol}://{target}"
+                        async with session.get(url, timeout=5) as response:
+                            console.print(f"[green]✅ {protocol.upper()}: {response.status}[/green]")
+                            
+                            # Check security headers
+                            headers = response.headers
+                            if 'X-Frame-Options' not in headers:
+                                vulnerabilities_found.append("Missing X-Frame-Options header")
+                            if 'X-Content-Type-Options' not in headers:
+                                vulnerabilities_found.append("Missing X-Content-Type-Options header")
+                            if 'Strict-Transport-Security' not in headers and protocol == 'https':
+                                vulnerabilities_found.append("Missing HSTS header")
+                                
+                    except Exception as e:
+                        console.print(f"[red]❌ {protocol.upper()}: {str(e)[:50]}[/red]")
+            
+            console.print("[yellow]💥 Phase 3: Exploitation Attempts...[/yellow]")
+            
+            # Test common endpoints
+            common_endpoints = ['/admin', '/api', '/login', '/.env', '/config', '/backup']
+            for endpoint in common_endpoints:
+                try:
+                    url = f"https://{target}{endpoint}"
+                    async with aiohttp.ClientSession() as session:
+                        async with session.get(url, timeout=3) as response:
+                            if response.status == 200:
+                                vulnerabilities_found.append(f"Exposed endpoint: {endpoint}")
+                                console.print(f"[red]🚨 FOUND: {endpoint} (Status: {response.status})[/red]")
+                except:
+                    pass
+            
+            console.print("[yellow]📊 Phase 4: Report Generation...[/yellow]")
+            
+            # Generate report
+            console.print(f"\n[bold green]🎯 PENETRATION TEST RESULTS FOR {target}[/bold green]")
+            console.print(f"[cyan]Target IP: {ip}[/cyan]")
+            console.print(f"[cyan]Vulnerabilities Found: {len(vulnerabilities_found)}[/cyan]")
+            
+            if vulnerabilities_found:
+                console.print("\n[bold red]🚨 CRITICAL FINDINGS:[/bold red]")
+                for i, vuln in enumerate(vulnerabilities_found, 1):
+                    console.print(f"  {i}. {vuln}")
+            else:
+                console.print("\n[green]✅ No obvious vulnerabilities detected[/green]")
+            
+            console.print(f"\n[bold green]✅ PENETRATION TEST COMPLETED FOR {target}[/bold green]")
+            
+        except Exception as e:
+            console.print(f"[red]❌ Penetration test failed: {e}[/red]")
 
     async def direct_penetration_testing(self):
         """Direct penetration testing without AI dependencies"""
